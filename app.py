@@ -59,9 +59,20 @@ def convert_pdf_to_markdown(input_path, output_dir):
     PyMuPDF4LLM reconstrói títulos (a partir do tamanho da fonte), negrito/
     itálico, listas e tabelas em Markdown, e aciona OCR automaticamente em
     páginas escaneadas quando o Tesseract está disponível no sistema.
+
+    OCR (pymupdf4llm 1.28): `use_ocr=True` roda o Tesseract só nas páginas
+    sem texto extraível (páginas com texto nativo não passam por OCR);
+    `ocr_language` é a lista de idiomas do Tesseract — "por+eng" usa os
+    pacotes tesseract-ocr-por e tesseract-ocr (inglês) do packages.txt.
+    Sem esse parâmetro o padrão da biblioteca é "eng" e o OCR de um PDF
+    escaneado em português sai sem acentos e com palavras trocadas.
     """
     try:
-        md_text = pymupdf4llm.to_markdown(str(input_path))
+        md_text = pymupdf4llm.to_markdown(
+            str(input_path),
+            use_ocr=True,
+            ocr_language="por+eng",
+        )
     except Exception as e:
         st.error(f"❌ Erro ao converter: {str(e)}")
         return None
